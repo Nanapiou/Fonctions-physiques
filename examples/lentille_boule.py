@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
 from math import *
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -58,7 +59,7 @@ plt.plot([-10, 20], [0, 0], '--k', lw=0.5)
 
 # Tracé du rayon
 
-h = 2/3 - 0.1
+h = 2 / 3 - 0.1
 
 rayon_sortant(h, 'black')
 

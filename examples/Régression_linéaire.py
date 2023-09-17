@@ -6,10 +6,9 @@
 # In[ ]:
 
 
+import matplotlib.pyplot as plt
 # Bibliothèques
 import numpy as np
-import matplotlib.pyplot as plt
-from random import *
 
 # In[ ]:
 

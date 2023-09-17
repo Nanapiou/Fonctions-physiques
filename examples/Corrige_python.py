@@ -1,9 +1,9 @@
 '''Appel des bibliothèques'''
-import numpy as np
-from numpy.random import *
 import matplotlib.pyplot as plt
 # rendre les graphiques moins flous
 import matplotlib_inline.backend_inline as bckend
+import numpy as np
+from numpy.random import *
 
 bckend.set_matplotlib_formats('svg')
 
