@@ -15,6 +15,9 @@ x = np.arange(0.01 * R, hl, 0.001)
 y = x / np.tan(i1 := x / R) + x / np.tan(np.arcsin((x * n) / R) - i1)
 
 plt.plot(x, y, "b")
+plt.title("Distance focale de la lentille en fonction de la hauteur du rayon")
+plt.xlabel("h")
+plt.ylabel("f'")
 plt.savefig("output.svg", format="svg")
 
 h = 1.
