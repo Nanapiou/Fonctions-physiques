@@ -1,3 +1,6 @@
+"""
+Des fonctions usuelles utiles
+"""
 from random import uniform
 
 
@@ -16,14 +19,14 @@ def monte_carlo(fn, *args, N=5000):
     :return: Generator Un itérateur des résultats
     """
     yield from (fn(*(uniform(e - delta, e + delta) for e, delta in args)) for i in range(N))
-    
 
 
 if __name__ == "__main__":
     import numpy as np
+
     array = np.fromiter(
-      monte_carlo(lambda x1, x2, D: ((D**2) - ((x2 - x1)**2)) / (4 * D), (18, 3), (41, 3), (60, 0.1)),
-      float
+        monte_carlo(lambda x1, x2, D: ((D ** 2) - ((x2 - x1) ** 2)) / (4 * D), (18, 3), (41, 3), (60, 0.1)),
+        float
     )
 
     print("Distance focale: %.2f +/- %.2f cm" % (np.mean(array), np.std(array)))
