@@ -40,7 +40,7 @@ def rayon_sortant(h, color_curve):
 
 # tracé de la lentille demi-boule
 
-n = 1.5
+n = 3/2
 R = 1
 
 plt.plot([0, 0], [-1, 1], color='black')
@@ -66,7 +66,7 @@ rayon_sortant(h, 'black')
 # Affichage de la figure
 
 plt.legend(bbox_to_anchor=(1.05, 1))
-plt.axis([-1, 3.5, -2.5, 2.5])
+plt.axis((-1, 3.5, -2.5, 2.5))
 plt.gca().set_aspect("equal", adjustable="box")
 plt.title('Lentille demi-boule d\'indice n=' + str(n))
 plt.show()
