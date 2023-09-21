@@ -6,7 +6,7 @@ def monte_carlo(fn, *args, N=5000):
     Une version généralisée de monte-carlo
 
     Exemple d'utilisation:
-        result = monte_carlo(lambda a, b: sin(a) * sin(b), (3, 0.5), (5, 0.3))
+        result = list(monte_carlo(lambda a, b: sin(a) * sin(b), (3, 0.5), (5, 0.3)))
     Ici, a vaudra 3 +/- 0.5 et b vaudra 5 +/- 0.3
     Un générateur de toutes les valeurs résultantes sera retourné
 
