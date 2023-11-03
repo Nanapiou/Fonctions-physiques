@@ -8,11 +8,11 @@ from fonctions_utiles import euler # Doesn't work because of folders organizatio
 R = 1000 # Ohm
 L = .01 # H
 E = 5 # V
-tau = L / R # s
+tau = L / R # T
 
 t0, tm = 0, 50e-6
 
-def f_rc(y):
+def f_rc(y, t): # t is unused, because coefficients are constant
     return (E / L) - (1 / tau) * y
 
 def i(t):

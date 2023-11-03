@@ -40,7 +40,7 @@ def euler(f, t0, y0, tmax, h):
     y[0] = y0
 
     for i in range(1, len(x)):
-        y[i] = y[i - 1] + h * f(y[i - 1])
+        y[i] = y[i - 1] + h * f(y[i - 1], x[i - 1])
     
     return x, y
 
