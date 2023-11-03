@@ -1,6 +1,3 @@
-"""
-DM2 pasted
-"""
 import matplotlib.pyplot as plt
 import numpy as np
 from fonctions_utiles import euler # Doesn't work because of folders organization.
@@ -8,7 +5,7 @@ from fonctions_utiles import euler # Doesn't work because of folders organizatio
 R = 1000 # Ohm
 L = .01 # H
 E = 5 # V
-tau = L / R # s
+tau = L / R
 
 t0, tm = 0, 50e-6
 

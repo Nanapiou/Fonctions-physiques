@@ -2,6 +2,7 @@
 Des fonctions usuelles utiles
 """
 from random import uniform
+import numpy as np
 
 
 def monte_carlo(fn, *args, N=5000):
@@ -19,6 +20,29 @@ def monte_carlo(fn, *args, N=5000):
     :return: Generator Un itérateur des résultats
     """
     yield from (fn(*(uniform(e - delta, e + delta) for e, delta in args)) for i in range(N))
+
+
+def euler(f, t0, y0, tmax, h):
+    """
+    Une version de la méthode d'Euler pour résoudre une équation différentielle
+    
+    :param: f La fonction de dérivée de l'équation différentielle
+    :param: t0 Le temps initial
+    :param: y0 La valeur initiale
+    :param: tmax Le temps maximal
+    :param: h Le pas de calcul
+    :return: x, y Les valeurs de temps et de la fonction
+    """
+    N = round((tmax - t0) / h)
+
+    x = np.linspace(t0, tmax, N)
+    y = np.empty(N)
+    y[0] = y0
+
+    for i in range(1, len(x)):
+        y[i] = y[i - 1] + h * f(y[i - 1])
+    
+    return x, y
 
 
 if __name__ == "__main__":
