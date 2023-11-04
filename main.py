@@ -13,6 +13,7 @@ E = 5 # V
 tau = L / R # s
 omega = 10 ** 5 # rad.s-1
 T = 0.1e-3 # s
+k = 1 # Sans dimension
 
 t0, tm = 0, 50e-6 # s
 
@@ -28,6 +29,14 @@ def e(t):
 
 def e_scie(t):
     return E * (t / T - (t // T))
+
+def e_triangle(t): # Pourquoi ça maarche paaaas
+    if isinstance(t, (float, int)):
+        return 2 * E * (t - k * T) if k * T <= t <= (k + 0.5) * T else 2 * E * (1 - t + k * T)
+    else:
+        return np.fromiter(
+            (e_triangle(t[i]) for i in range(len(t)))
+        , float)
 
 def fosc_rc(y, t):
     return (e(t) / L) - (y / tau)
@@ -102,14 +111,15 @@ match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) r
         print("Calcul en cours, veuillez patienter...")
         T_vals = np.linspace(1e-6, 1e-3, 1000)
         amplitudes = np.fromiter(
-            (max(ur_vals := (euler(lambda y, t: ((E * (t / T - (t // T)) - y) / tau), t0, 0, tm * 10, 1e-8)[1])) - min(ur_vals)
+            (max(ur_vals := (euler(lambda y, t: ((E * (t / T - (t // T)) - y) / tau), 1e-4, 0, tm * 10, 1e-8)[1])) - min(ur_vals)
             for T in T_vals)
         , float)
         plt.xlabel('T (s)')
         plt.ylabel('Amplitude (V)')
         plt.plot(T_vals, amplitudes, '-r', label='Amplitude')
+        print(f"Non représentatif à partir de T = {tm * 10} s, car la tension n'est plus une scie sur [t0:tm].")
     case _: # Tests
-        plt.plot(x := np.linspace(t0, tm * 10, 1000), e_scie(x), '-c', label='e(t)')
+        plt.plot(x := np.linspace(k * T, (k + 1) * T, 1000), e_triangle(x), '-c', label='e(t)') # Buh
 
 
 plt.title('Circuit RL')
