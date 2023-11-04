@@ -1,5 +1,5 @@
 """
-DM2 pasted
+Nécessite au moins de Python 3.10 pour le match case et 3.8 pour le :=
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +12,7 @@ L = 10e-3 # H
 E = 5 # V
 tau = L / R # s
 omega = 10 ** 5 # rad.s-1
+T = 0.1e-3 # s
 
 t0, tm = 0, 50e-6 # s
 
@@ -19,12 +20,14 @@ def f_rc(y, t):
     return (E / L) - (1 / tau) * y
 
 def i(t):
-    return (E/R)*(1 - np.exp(-R*t/L))
+    return (E / R) * (1 - np.exp(-R * t / L))
 
 def e(t):
-    # If is array, return array of E, else return E
     # return E if isinstance(t, (float, int)) else np.array([E for _ in t])
     return E * np.cos(omega * t)
+
+def e_scie(t):
+    return E * (t / T - (t // T))
 
 def fosc_rc(y, t):
     return (e(t) / L) - (y / tau)
@@ -34,12 +37,19 @@ def f_ur_rc(y, t):
 
 # Pour tester bilan de tension
 def f_ul_rc(y, t):
+    # return (E - (y / tau))
     return (-omega * E * np.sin(omega * t) - (y / tau))
+
+def fscie_rc(y, t):
+    return (e_scie(t) / L) - (y / tau)
+
+def fscie_ur_rc(y, t):
+    return (e_scie(t) - y) / tau
 
 
 x = np.linspace(t0, tm, 1000)
 
-match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) résolu numériquement\n3 - i(t) résolu numériquement avec une alimentation sinusoidale\n4 - Le bilan de tension en alimentation sinusoidale\n> "):
+match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) résolu numériquement\n3 - i(t) résolu numériquement avec une alimentation sinusoidale\n4 - Le bilan de tension en alimentation sinusoidale\n5 - L'amplitude de Ur(t) en fonction de omega\n6 - i(t) résolu numériquement avec une alimentation en scie\n7 - Ur(t) et e(t) avec une alimentation en scie\n8 - L'amplitude de Ur en fonction de T\n> "):
     case '1':
         plt.xlabel('Temps (s)')
         plt.ylabel('Intensité (A)')
@@ -60,14 +70,47 @@ match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) r
 
         y_ur = euler(f_ur_rc, t0, 0, tm, (tm - t0) / len(x))[1]
         y_ul = euler(f_ul_rc, t0, E, tm, (tm - t0) / len(x))[1]
+        e_vals = e(x)
         plt.plot(x, y_ur, '-m', label='Ur')
         plt.plot(x, y_ul, '-y', label='Ul')
-        plt.plot(x, e_vals := e(x), '-c', label='e(t)')
+        plt.plot(x, e_vals, '-c', label='e(t)')
 
-        bilan_tensions = list()
-        for i in range(len(x)):
-            bilan_tensions.append(e_vals[i] - y_ur[i] - y_ul[i])
+        bilan_tensions = np.fromiter((e_vals[i] - y_ur[i] - y_ul[i] for i in range(len(x))), float)
         plt.plot(x, bilan_tensions, '-k', label='e - uR - uL')
+    case '5':
+        print("Calcul en cours, veuillez patienter...")
+        omaga_vals = np.linspace(1e4, 1e6, 1000)
+        amplitudes = np.fromiter(
+            (max(ur_vals := (euler(lambda y, t: ((E * np.cos(omega * t) - y) / tau), t0, 0, tm, 1e-8)[1])) - min(ur_vals)
+            for omega in omaga_vals)
+        , float)
+        plt.xlabel('Omega (rad/s)')
+        plt.ylabel('Amplitude (V)')
+        plt.plot(omaga_vals, amplitudes, '-r', label='Amplitude')
+    case '6':
+        plt.xlabel('Temps (s)')
+        plt.ylabel('Intensité (A)')
+        plt.plot(*euler(fscie_rc, t0, 0, tm * 10, 1e-8), '-b', label='i(t)')
+    case '7':
+        plt.xlabel('Temps (s)')
+        plt.ylabel('Tension (V)')
+
+        x_allonge = np.linspace(t0, tm * 10, 1000)
+        plt.plot(*euler(fscie_ur_rc, t0, 0, tm * 10, 1e-8), '-m', label='Ur(t)')
+        plt.plot(x_allonge, e_scie(x_allonge), '-c', label='e(t)')
+    case '8':
+        print("Calcul en cours, veuillez patienter...")
+        T_vals = np.linspace(1e-6, 1e-3, 1000)
+        amplitudes = np.fromiter(
+            (max(ur_vals := (euler(lambda y, t: ((E * (t / T - (t // T)) - y) / tau), t0, 0, tm * 10, 1e-8)[1])) - min(ur_vals)
+            for T in T_vals)
+        , float)
+        plt.xlabel('T (s)')
+        plt.ylabel('Amplitude (V)')
+        plt.plot(T_vals, amplitudes, '-r', label='Amplitude')
+    case _: # Tests
+        plt.plot(x := np.linspace(t0, tm * 10, 1000), e_scie(x), '-c', label='e(t)')
+
 
 plt.title('Circuit RL')
 plt.grid(True)
