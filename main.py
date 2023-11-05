@@ -55,22 +55,23 @@ def fscie_ur_rc(y, t):
 
 
 x = np.linspace(t0, tm, 1000)
+plt.title('Circuit RL')
 
-match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) résolu numériquement\n3 - i(t) résolu numériquement avec une alimentation sinusoidale\n4 - Le bilan de tension en alimentation sinusoidale\n5 - L'amplitude de Ur(t) en fonction de omega\n6 - i(t) résolu numériquement avec une alimentation en scie\n7 - Ur(t) et e(t) avec une alimentation en scie\n8 - L'amplitude de Ur en fonction de T\n> "):
+match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) résolu numériquement\n3 - i(t) résolu numériquement avec une alimentation sinusoidale\n4 - Le bilan de tension en alimentation sinusoidale\n5 - L'amplitude de Ur(t) en fonction de omega\n6 - i(t) résolu numériquement avec une alimentation en scie\n7 - Ur(t) et e(t) avec une alimentation en scie\n8 - L'amplitude de Ur en fonction de T\n9 - Exercice 1, question 7, uc(t), E(t) et u1(t)\n> "):
     case '1':
         plt.xlabel('Temps (s)')
         plt.ylabel('Intensité (A)')
-        plt.plot(x, i(x), '-r', label='i(t)')
+        plt.plot(x, i(x), '-r', label='$i(t)$')
     case '2':
         plt.xlabel('Temps (s)')
         plt.ylabel('Intensité (A)')
         for h, fmt in ((1e-6, '-r'), (1e-7, '-g'), (1e-8, '-b')):
-            plt.plot(*euler(f_rc, t0, 0, tm, h), fmt, label=f'i(t) avec h={h}')
-        plt.plot(x, i(x), '-k', label='i(t)')
+            plt.plot(*euler(f_rc, t0, 0, tm, h), fmt, label=f'$i(t) avec h={h}$')
+        plt.plot(x, i(x), '-k', label='$i(t)$')
     case '3':
         plt.xlabel('Temps (s)')
         plt.ylabel('Intensité (A)')
-        plt.plot(*euler(fosc_rc, t0, 0, tm, 1e-8), '-b', label='i(t)')
+        plt.plot(*euler(fosc_rc, t0, 0, tm, 1e-8), '-b', label='$i(t)$')
     case '4':
         plt.xlabel('Temps (s)')
         plt.ylabel('Tension (V)')
@@ -78,12 +79,12 @@ match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) r
         y_ur = euler(f_ur_rc, t0, 0, tm, (tm - t0) / len(x))[1]
         y_ul = euler(f_ul_rc, t0, E, tm, (tm - t0) / len(x))[1]
         e_vals = e(x)
-        plt.plot(x, y_ur, '-m', label='Ur')
-        plt.plot(x, y_ul, '-y', label='Ul')
-        plt.plot(x, e_vals, '-c', label='e(t)')
+        plt.plot(x, y_ur, '-m', label='$u_r(t)$')
+        plt.plot(x, y_ul, '-y', label='$u_l(t)$')
+        plt.plot(x, e_vals, '-c', label='$e(t)$')
 
         bilan_tensions = np.fromiter((e_vals[i] - y_ur[i] - y_ul[i] for i in range(len(x))), float)
-        plt.plot(x, bilan_tensions, '-k', label='e - uR - uL')
+        plt.plot(x, bilan_tensions, '-k', label='$e(t) - u_r(t) - u_l(t)$')
     case '5':
         print("Calcul en cours, veuillez patienter...")
         omaga_vals = np.linspace(1e4, 1e6, 1000)
@@ -97,14 +98,14 @@ match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) r
     case '6':
         plt.xlabel('Temps (s)')
         plt.ylabel('Intensité (A)')
-        plt.plot(*euler(fscie_rc, t0, 0, tm * 10, 1e-8), '-b', label='i(t)')
+        plt.plot(*euler(fscie_rc, t0, 0, tm * 10, 1e-8), '-b', label='$i(t)$')
     case '7':
         plt.xlabel('Temps (s)')
         plt.ylabel('Tension (V)')
 
         x_allonge = np.linspace(t0, tm * 10, 1000)
-        plt.plot(*euler(fscie_ur_rc, t0, 0, tm * 10, 1e-8), '-m', label='Ur(t)')
-        plt.plot(x_allonge, e_scie(x_allonge), '-c', label='e(t)')
+        plt.plot(*euler(fscie_ur_rc, t0, 0, tm * 10, 1e-8), '-m', label='$u_r(t)$')
+        plt.plot(x_allonge, e_scie(x_allonge), '-c', label='$e(t)$')
     case '8':
         print("Calcul en cours, veuillez patienter...")
         T_vals = np.linspace(1e-6, 1e-3, 1000)
@@ -116,11 +117,20 @@ match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) r
         plt.ylabel('Amplitude (V)')
         plt.plot(T_vals, amplitudes, '-r', label='Amplitude')
         print(f"Non représentatif à partir de T = {tm * 10} s, car la tension n'est plus une scie sur [t0:tm].")
+    case '9':
+        plt.title("Courbe de $u_c$ pour $t1 < t < t2$")
+        alpha = 1/2
+        t1 = 1e-3
+        t2 = t1 + tau * np.log((1 + alpha) / (1 - alpha))
+
+        uc = lambda t: E * (-1 + (alpha + 1) * np.exp(-(t - t1) / tau))
+        plt.plot(x := np.linspace(t1, t2, 1000), uc(x), '-r', label='$u_c(t)$')
+        plt.plot(x, e_vals := np.full(1000, -E), '-b', label='$E(t)$')
+        plt.plot(x, e_vals * alpha, '-y', label='$u_1(t)$')
     case _: # Tests
-        plt.plot(x := np.linspace(k * T, (k + 1) * T, 1000), e_triangle(x), '-c', label='e(t)') # Buh
+        plt.plot(x := np.linspace(k * T, (k + 1) * T, 1000), e_triangle(x), '-c', label='$E(t)$') # Buh
 
 
-plt.title('Circuit RL')
 plt.grid(True)
 plt.legend()
 plt.show()
