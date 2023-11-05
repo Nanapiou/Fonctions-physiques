@@ -1,10 +1,8 @@
 """
-Nécessite au moins de Python 3.10 pour le match case et 3.8 pour le :=
+Nécessite au moins Python 3.10 pour le match case et 3.8 pour le :=
 """
 import matplotlib.pyplot as plt
 import numpy as np
-from math import cos
-import scipy.integrate as integrate
 from fonctions_utiles import euler # Doesn't work because of folders organization.
 
 R = 1000 # Ohm
