@@ -120,6 +120,9 @@ match input("Que faut-il afficher ?\n1 - i(t) résolu analytiquement\n2 - i(t) r
     case '9':
         plt.title("Courbe de $u_c$ pour $t1 < t < t2$")
         alpha = 1/2
+
+        R, C = 1000, 10e-6 # Ohm, F
+        tau = R * C # s
         t1 = - tau * np.log(1 - alpha)
         t2 = t1 + tau * np.log((1 + alpha) / (1 - alpha))
 
